@@ -10,8 +10,8 @@ export declare namespace Tractor {
         private multitrackBuilder;
         private builder;
         addEntry(entry: Track, timestamp?: Timestamp): this;
-        addFilter(filter: Filter, track: Track): this;
-        addTransition(transition: Transition, a_track: Track, b_track: Track): this;
+        addFilter(filter: Filter, track: Track, timestamp?: Timestamp): this;
+        addTransition(transition: Transition, a_track: Track, b_track: Track, timestamp?: Timestamp): this;
         build(): Tractor;
     }
 }

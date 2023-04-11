@@ -11,5 +11,6 @@ export declare namespace Filter {
         addProperty(name: string, value: string | number): this;
         build(): Filter;
     }
+    function Lumakey(): Filter;
 }
 //# sourceMappingURL=filter.d.ts.map
