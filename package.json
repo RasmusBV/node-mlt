@@ -1,0 +1,34 @@
+{
+  "name": "melt",
+  "version": "0.0.0",
+  "description": "",
+  "types": "./lib/cjs/types/external.d.ts",
+  "main": "./lib/cjs/external.js",
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p ./configs/tsconfig.esm.json && mv lib/esm/external.js lib/esm/external.mjs",
+    "build:cjs": "tsc -p ./configs/tsconfig.cjs.json",
+    "prepack": "npm run build"
+  },
+  "author": "Rasmus Bergman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.15.11"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/esm/types/external.d.ts",
+        "default": "./lib/esm/external.mjs"
+      },
+      "require": {
+        "types": "./lib/cjs/types/external.d.ts",
+        "default": "./lib/cjs/external.js"
+      }
+    }
+  }
+}
