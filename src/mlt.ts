@@ -1,88 +1,55 @@
-import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './nodes.js'
+import { createWriteStream } from 'fs'
+import { mkdtemp } from 'fs/promises'
+import {join} from 'path'
+import {tmpdir} from 'os'
+import { spawn, ChildProcessWithoutNullStreams, exec } from 'child_process'
 
-import { Producer } from './nodes/producer.js'
-import { Playlist } from './nodes/playlist.js'
-import { Tractor } from './nodes/tractor.js'
-import { Consumer } from './nodes/consumer.js'
-import { Filter } from './nodes/filter.js'
+import { Document, XMLIndenter } from './document.js'
 
-export type Producers = Producer | Playlist | Tractor
-export type Track = {element: Producers, context: {timestamp?: Timestamp}}
-export type Entry = Track|{element: Node<"blank">}
+export async function createXMLDocument(document: Document, path?: string) {
+    //Create writeStream to specified path or temp file
+    let filePath: string
+    if(path) {
+        filePath = path
+    } else {
+        const tmp = await mkdtemp(join(tmpdir(), "melt-"))
+        filePath = join(tmp, "doc.mlt")
+    }
+    const stream = createWriteStream(filePath, {flags: "a"})
+    
+    //Write to stream
+    const xml = XMLIndenter(document.generateXML())
+    return new Promise((resolve: (value: string) => void, reject) => {
+        stream.on("ready", () => {
+            let value = xml.next()
+            while(!value.done) {
+                const line = value.value
+                stream.write(line)
+                value = xml.next()
+            }
+            stream.write(" ", () => {
+                stream.close(() => {
+                    resolve(filePath)
+                })
+            })
+        })
+        stream.on("error", (e) => reject(e))
+    })
+}
 
+export async function melt(document: Document, progress?: (percentage: number) => void) {
+    const path = await createXMLDocument(document)
+    console.log(path)
+    const ls = spawn("melt", [path])
 
-export class Document {
-    private profile: Record<string, string | number>
-    private consumer: Consumer | undefined
-    private filters: Filter[]
-    private root: Producer | undefined
-    constructor({profile= {}, consumer = undefined, filters = [], root = undefined}: {profile?: Record<string, string | number>, consumer?: Consumer, filters?: Filter[], root?: Producer} = {}) {
-        this.profile = profile
-        this.consumer = consumer
-        this.filters = filters
-        this.root = root
+    if(progress) {
+        ls.stderr.on('data', chunk => {
+            const chunkAsString = `${chunk}`
+            const stringLocation = chunkAsString.indexOf("percentage:")
+            if(stringLocation === -1) {return}
+            progress(parseInt(chunkAsString.slice(stringLocation).split(":")[1]))
+        })
+        ls.on('close', (code) => code ? undefined : progress(100))
     }
-    addProfile(profile: Record<string, string | number>) {
-        this.profile = profile
-    }
-    addConsumer(consumer: Consumer) {
-        this.consumer = consumer
-    }
-    addFilter(filter: Filter) {
-        this.filters.push(filter)
-    }
-    addRoot(root: Producer) {
-        this.root = root
-    }
-    generateDocument() {
-        const document: XMLString = []
-        if(this.profile) {
-            const profile = new Node("profile", this.profile)
-            document.push(profile.getXML().flat())
-        }
-        if(this.root) {
-            const nodeMap = Document.nodeCrawler(this.root)
-            const linkableElements = Array.from(nodeMap.values())
-            for(const [child, parents] of linkableElements) {
-                if(parents.size > 1) {
-                    document.push(child.getXML({}).flat())
-                }
-            }
-            document.push(this.root.getXML({}).flat())
-        }
-        for(const filter of this.filters) {
-            document.push(filter.getXML({}).flat())
-        }
-        if(this.consumer) {
-            document.push(this.consumer.getXML({}).flat())
-        }
-        const xml = ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>', document, '</mlt>']
-        return Document.indenter(xml).join("")  
-    }
-    private static indenter(xmlString: XMLString, doc: string[] = [], indent = 0) {
-        xmlString.forEach((value) => {
-            if (typeof value === "string") {
-                doc.push("    ".repeat(indent) + value + "\n");
-            }
-            else {
-                doc = Document.indenter(value, doc, indent + 1);
-            }
-        });
-        return doc;
-    };
-    private static nodeCrawler(node: ParentNode<any> | LinkableParentNode<any>, map: Map<string, [child: ParentNode<any> | LinkableParentNode<any>, parents: Set<ParentNode<any> | LinkableParentNode<any>>]> = new Map()) {
-        for(const {element: child} of node.children) {
-            if("linked" in child) {
-                if(map.has(child.id.id)) {
-                    map.get(child.id.id)![1].add(node)
-                } else {
-                    map.set(child.id.id, [child, new Set([node])])
-                }
-            }
-            if("children" in child) {
-                Document.nodeCrawler(child, map)
-            }
-        }
-        return map
-    }
+    return ls
 }

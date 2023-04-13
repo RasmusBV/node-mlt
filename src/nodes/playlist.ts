@@ -1,5 +1,5 @@
 import { LinkableParentNode, Node, Timestamp } from "../nodes.js"
-import { Entry, Producers } from "../mlt.js"
+import { Entry, Producers } from "../document.js"
 
 export class Playlist extends LinkableParentNode<"playlist"> {
     constructor(entries: Entry[]) {

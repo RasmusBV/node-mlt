@@ -1,5 +1,5 @@
 import { LinkableParentNode, ParentNode, ChildElement, Node, Timestamp } from "../nodes.js"
-import { Track, Producers } from "../mlt.js"
+import { Track, Producers } from "../document.js"
 import { Transition } from "./transition.js"
 import { Filter } from "./filter.js"
 
