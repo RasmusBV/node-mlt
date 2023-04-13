@@ -1,9 +1,9 @@
 {
-  "name": "melt",
+  "name": "node-melt",
   "version": "0.0.0",
   "description": "",
-  "types": "./lib/cjs/types/external.d.ts",
-  "main": "./lib/cjs/external.js",
+  "types": "./lib/cjs/types/index.d.ts",
+  "main": "./lib/cjs/index.js",
   "scripts": {
     "clean": "rm -rf ./lib",
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
@@ -22,12 +22,12 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/esm/types/external.d.ts",
-        "default": "./lib/esm/external.mjs"
+        "types": "./lib/esm/types/index.d.ts",
+        "default": "./lib/esm/index.mjs"
       },
       "require": {
-        "types": "./lib/cjs/types/external.d.ts",
-        "default": "./lib/cjs/external.js"
+        "types": "./lib/cjs/types/index.d.ts",
+        "default": "./lib/cjs/index.js"
       }
     }
   }
