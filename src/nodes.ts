@@ -28,7 +28,6 @@ export class Node<R extends string> {
         return new Node("property", {name}, value)
     }
     static mapPropertiesToNodes(properties: Record<string, string | number>) {
-        console.log()
         const nodes: ChildElement[] = Array(Object.entries(properties).length).fill(null)
         let i = 0
         for(const property in properties) {

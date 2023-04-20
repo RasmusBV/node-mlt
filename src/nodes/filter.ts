@@ -1,4 +1,4 @@
-import { Service, Timestamp } from "../nodes.js"
+import { Service, Timestamp } from "../nodes"
 
 export class Filter extends Service<"filter"> {
     constructor(mlt_service: Filter.Services, properties: Record<string, string | number>, timestamp?: Timestamp) {

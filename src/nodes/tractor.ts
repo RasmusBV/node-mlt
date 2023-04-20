@@ -1,7 +1,7 @@
-import { LinkableParentNode, ParentNode, ChildElement, Node, Timestamp } from "../nodes.js"
-import { Track, Producers } from "../document.js"
-import { Transition } from "./transition.js"
-import { Filter } from "./filter.js"
+import { LinkableParentNode, ParentNode, ChildElement, Node, Timestamp } from "../nodes"
+import { Track, Producers } from "../document"
+import { Transition } from "./transition"
+import { Filter } from "./filter"
 
 class Multitrack extends ParentNode<"multitrack">{
     tracks: Producers[]

@@ -4,7 +4,7 @@ import {join} from 'path'
 import {tmpdir} from 'os'
 import { spawn, ChildProcessWithoutNullStreams, exec } from 'child_process'
 
-import { Document, XMLIndenter } from './document.js'
+import { Document, XMLIndenter } from './document'
 
 export async function createXMLDocument(document: Document, path?: string) {
     //Create writeStream to specified path or temp file

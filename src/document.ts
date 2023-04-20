@@ -1,6 +1,6 @@
-import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './nodes.js'
+import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './nodes'
 
-import { Producer, Filter, Consumer, Tractor, Playlist } from './external.js'
+import { Producer, Filter, Consumer, Tractor, Playlist } from './external'
 
 export type Producers = Producer | Playlist | Tractor
 export type Track = {element: Producers, context: {timestamp?: Timestamp}}

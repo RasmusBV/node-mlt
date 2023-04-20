@@ -1,4 +1,4 @@
-import { Service, Timestamp } from "../nodes.js"
+import { Service, Timestamp } from "../nodes"
 
 export class Consumer extends Service<"consumer"> {
     constructor(mlt_service: Consumer.Services, properties: Record<string, string | number>, timestamp?: Timestamp) {

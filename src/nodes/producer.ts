@@ -1,4 +1,4 @@
-import { LinkableParentNode, Node, Timestamp } from "../nodes.js"
+import { LinkableParentNode, Node, Timestamp } from "../nodes"
 
 export class Producer extends LinkableParentNode<"producer"> {
     constructor(mlt_service: Producer.Services, properties: Record<string, string | number>, timestamp?: Timestamp) {
