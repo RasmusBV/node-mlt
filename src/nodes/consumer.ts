@@ -1,6 +1,6 @@
 import { Service, Timestamp } from "../nodes"
 
-export class Consumer extends Service<"consumer"> {
+export class Consumer extends Service {
     constructor(mlt_service: Consumer.Services, properties: Record<string, string | number>, timestamp?: Timestamp) {
         super("consumer", mlt_service, properties, timestamp)
     }

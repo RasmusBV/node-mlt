@@ -3,13 +3,13 @@ import { randomBytes } from 'crypto'
 export type XMLString = (string | XMLString)[]
 export type Timestamp = {in?: number, out?: number}
 export type Context = {timestamp?: Timestamp, children?: ChildElement[]}
-export type ChildElement = ({element: ParentNode<any> | LinkableParentNode<any>, context: Context}|{element: Node<any>})
+export type ChildElement = ({element: {node: ParentNode | LinkableParentNode}, context: Context}|{element: {node: Node}})
 
-export class Node<R extends string> {
-    name: R
+export class Node {
+    name: string
     attributes: Record<string, string | number>
     value: string | number | undefined
-    constructor(name: R, attributes: Record<string, string | number>, value?: string | number) {
+    constructor(name: string, attributes: Record<string, string | number>, value?: string | number) {
         this.name = name
         this.attributes = attributes
         this.value = value
@@ -24,33 +24,30 @@ export class Node<R extends string> {
     private static getAttributeTags(attributes: Record<string, string | number>) {
         return " " + Object.entries(attributes).map(([key, value]) => `${key}="${value}"`).join(" ")
     }
-    static Property(name: string, value: string | number) {
-        return new Node("property", {name}, value)
-    }
     static mapPropertiesToNodes(properties: Record<string, string | number>) {
         const nodes: ChildElement[] = Array(Object.entries(properties).length).fill(null)
         let i = 0
         for(const property in properties) {
-            nodes[i] = {element: Node.Property(property, properties[property])}
+            nodes[i] = {element: new Property(property, properties[property])}
         }
         return nodes
     }
 }
 
-export class ParentNode<R extends string> {
-    name: R
+export class ParentNode {
+    name: string
     timestamp: Timestamp
     children: ChildElement[]
     linkName: string | undefined
     id: Record<string, string> = {}
-    constructor(name: R, children: ChildElement[], timestamp: Timestamp = {}, linkName?: string) {
+    constructor(name: string, children: ChildElement[], timestamp: Timestamp = {}, linkName?: string) {
         this.name = name
         this.timestamp = timestamp
         this.children = children
         this.linkName = linkName
         this.id = {id: name + "_" + randomBytes(4).toString('hex')}
     }
-    getXML({timestamp = undefined, children=[]}: Context): XMLString {
+    getXML({timestamp = undefined, children=[]}: Context = {}): XMLString {
         const availableTimestamp: Record<string, string | number> = timestamp ? timestamp : this.timestamp
         const open = `<${this.name}${ParentNode.getAttributeTags({...availableTimestamp, ...this.id})}>`
         const close = `</${this.name}>`
@@ -70,19 +67,19 @@ export class ParentNode<R extends string> {
     }
     static getChildXML(child: ChildElement, linkName: string | undefined) {
         if("context" in child) {
-            return child.element.getXML(child.context, linkName)
+            return child.element.node.getXML(child.context, linkName)
         } else {
-            return child.element.getXML()
+            return child.element.node.getXML()
         }
     }
 }
 
-export class LinkableParentNode<R extends string> extends ParentNode<R> {
+export class LinkableParentNode extends ParentNode {
     linked = false
-    constructor(name: R, children: ChildElement[], timestamp: Timestamp = {}, linkName?: string) {
+    constructor(name: string, children: ChildElement[], timestamp: Timestamp = {}, linkName?: string) {
         super(name, children, timestamp, linkName)
     }
-    getXML({timestamp = undefined, children=[]}: Context, linkName?: string): XMLString {
+    getXML({timestamp = undefined, children=[]}: Context = {}, linkName?: string): XMLString {
         if(!this.linked) {
             this.linked = true
             return super.getXML({timestamp, children})
@@ -95,14 +92,23 @@ export class LinkableParentNode<R extends string> extends ParentNode<R> {
     }
 }
 
-export class Service<R extends string> extends ParentNode<R>{
-    constructor(name: R, mlt_service: string, properties: Record<string, string | number>, timestamp?: Timestamp) {
+export class Service {
+    node: LinkableParentNode
+    constructor(name: string, mlt_service: string, properties: Record<string, string | number>, timestamp?: Timestamp) {
         const children = Node.mapPropertiesToNodes(properties)
-        children.push({element: Node.Property("mlt_service", mlt_service)})
-        super(name, children, timestamp)
+        children.push({element: new Property("mlt_service", mlt_service)})
+        this.node = new LinkableParentNode(name, children, timestamp)    
     }
-    addProperty(name: string, value: string | number) {
-        this.children.push({element: Node.Property(name, value)})
+    pushProperty(name: string, value: string | number) {
+        this.node.children.push({element: new Property(name, value)})
         return this
+    }
+    
+}
+
+export class Property {
+    node: Node
+    constructor(name: string, value: string | number) {
+        this.node = new Node("property", {name}, value)
     }
 }

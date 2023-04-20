@@ -2,9 +2,8 @@ import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './no
 
 import { Producer, Filter, Consumer, Tractor, Playlist } from './external'
 
-export type Producers = Producer | Playlist | Tractor
+export type Producers = Producer | Playlist
 export type Track = {element: Producers, context: {timestamp?: Timestamp}}
-export type Entry = Track|{element: Node<"blank">}
 
 export function* XMLIndenter(xmlString: XMLString, indent = 4,i = 0): Generator<string, void, undefined> {
     for(const value of xmlString) {
@@ -46,7 +45,7 @@ export class Document {
             document.push(profile.getXML())
         }
         if(this.root) {
-            const nodeMap = Document.nodeCrawler(this.root)
+            const nodeMap = Document.nodeCrawler(this.root.node)
             const linkableElements = Array.from(nodeMap.values())
 
             //For any child which has more than 1 parent
@@ -56,13 +55,13 @@ export class Document {
                     document.push(child.getXML({}))
                 }
             }
-            document.push(this.root.getXML({}))
+            document.push(this.root.node.getXML({}))
         }
         for(const filter of this.filters) {
-            document.push(filter.getXML({}))
+            document.push(filter.node.getXML({}))
         }
         if(this.consumer) {
-            document.push(this.consumer.getXML({}))
+            document.push(this.consumer.node.getXML({}))
         }
         return ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>', document, '</mlt>']
     }
@@ -75,17 +74,17 @@ export class Document {
         }
         return document.join("")
     }
-    private static nodeCrawler(node: ParentNode<any> | LinkableParentNode<any>, map: Map<string, [child: ParentNode<any> | LinkableParentNode<any>, parents: Set<ParentNode<any> | LinkableParentNode<any>>]> = new Map()) {
+    private static nodeCrawler(node: ParentNode | LinkableParentNode, map: Map<string, [child: ParentNode | LinkableParentNode, parents: Set<ParentNode | LinkableParentNode>]> = new Map()) {
         for(const {element: child} of node.children) {
-            if("linked" in child) {
-                if(map.has(child.id.id)) {
-                    map.get(child.id.id)![1].add(node)
+            if("linked" in child.node) {
+                if(map.has(child.node.id.id)) {
+                    map.get(child.node.id.id)![1].add(node)
                 } else {
-                    map.set(child.id.id, [child, new Set([node])])
+                    map.set(child.node.id.id, [child.node, new Set([node])])
                 }
             }
-            if("children" in child) {
-                Document.nodeCrawler(child, map)
+            if("children" in child.node) {
+                Document.nodeCrawler(child.node, map)
             }
         }
         return map

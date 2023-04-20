@@ -3,20 +3,19 @@ import { Filter, Transition, Consumer } from "../external";
 
 const simpleService = new Service("service", "test", {})
 
-function simpleXMLGenerator(service: Service<string>, mlt_service: string) {
+function simpleXMLGenerator(service: Service, mlt_service: string) {
     return [
-                `<${service.name} id="${service.id.id}">`,
+                `<${service.node.name} id="${service.node.id.id}">`,
                 [ 
                     `<property name="mlt_service">${mlt_service}</property>` 
                 ],
-                `</${service.name}>`
+                `</${service.node.name}>`
             ]
 }
 
-
 const simpleXMLResult = simpleXMLGenerator(simpleService, "test")
 test("Simple Service", () => {
-    expect(simpleService.getXML({})).toEqual(simpleXMLResult)
+    expect(simpleService.node.getXML({})).toEqual(simpleXMLResult)
 })
 
 const filter = new Filter("affine", {})
@@ -27,8 +26,8 @@ const consumer = new Consumer("avformat", {})
 const consumerXMLResult = simpleXMLGenerator(consumer, "avformat")
 
 test("All Services", () => {
-    expect(filter.getXML({})).toEqual(filterXMLResult)
-    expect(transition.getXML({})).toEqual(transitionXMLResult)
-    expect(consumer.getXML({})).toEqual(consumerXMLResult)
+    expect(filter.node.getXML({})).toEqual(filterXMLResult)
+    expect(transition.node.getXML({})).toEqual(transitionXMLResult)
+    expect(consumer.node.getXML({})).toEqual(consumerXMLResult)
 })
 
