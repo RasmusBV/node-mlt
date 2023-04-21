@@ -1,5 +1,5 @@
 import { LinkableParentNode, Node, Timestamp } from "../nodes"
-import { Track, Producers } from "../document"
+import { Producers } from "../document"
 
 export class Playlist {
     node: LinkableParentNode
@@ -7,13 +7,16 @@ export class Playlist {
         this.node = new LinkableParentNode("playlist", entries, {}, "entry")
     }
     addTrack(producer: Producers, timestamp: Timestamp = {}) {
-        this.node.children.push({element: producer, context: {timestamp}})
+        this.node.addChild(producer, timestamp)
         return this
+    }
+    addBlank(length: number) {
+        this.node.addChild(new Playlist.Blank(length))
     }
 }
 
 export namespace Playlist {
-    export type Entry = Track | {element: Blank}
+    export type Entry = {element: Producers, timestamp?: Timestamp} | {element: Blank}
     export class Blank {
         node: Node
         constructor(length: number) {

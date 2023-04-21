@@ -2,8 +2,7 @@ import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './no
 
 import { Producer, Filter, Consumer, Tractor, Playlist } from './external'
 
-export type Producers = Producer | Playlist
-export type Track = {element: Producers, context: {timestamp?: Timestamp}}
+export type Producers = Producer | Playlist | Tractor
 
 export function* XMLIndenter(xmlString: XMLString, indent = 4,i = 0): Generator<string, void, undefined> {
     for(const value of xmlString) {
@@ -20,7 +19,7 @@ export class Document {
     private consumer: Consumer | undefined
     private filters: Filter[]
     private root: Producers | undefined
-    constructor({profile= {}, consumer = undefined, filters = [], root = undefined}: {profile?: Record<string, string | number>, consumer?: Consumer, filters?: Filter[], root?: Producer} = {}) {
+    constructor({profile= {}, consumer = undefined, filters = [], root = undefined}: {profile?: Record<string, string | number>, consumer?: Consumer, filters?: Filter[], root?: Producers} = {}) {
         this.profile = profile
         this.consumer = consumer
         this.filters = filters
@@ -46,22 +45,22 @@ export class Document {
         }
         if(this.root) {
             const nodeMap = Document.nodeCrawler(this.root.node)
-            const linkableElements = Array.from(nodeMap.values())
-
+            const linkableElements = Array.from(nodeMap.entries()).sort((a, b) => b[1][1]-a[1][1])
             //For any child which has more than 1 parent
             //Generates XML for that node at the top of the document for linking
-            for(const [child, parents] of linkableElements) {
-                if(parents.size > 1) {
-                    document.push(child.getXML({}))
+            for(const [child, [parents]] of linkableElements) {
+                if(parents > 1) {
+                    console.log([child, parents])
+                    document.push(child.getXML())
                 }
             }
-            document.push(this.root.node.getXML({}))
+            document.push(this.root.node.getXML())
         }
         for(const filter of this.filters) {
-            document.push(filter.node.getXML({}))
+            document.push(filter.node.getXML())
         }
         if(this.consumer) {
-            document.push(this.consumer.node.getXML({}))
+            document.push(this.consumer.node.getXML())
         }
         return ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>', document, '</mlt>']
     }
@@ -74,18 +73,32 @@ export class Document {
         }
         return document.join("")
     }
-    private static nodeCrawler(node: ParentNode | LinkableParentNode, map: Map<string, [child: ParentNode | LinkableParentNode, parents: Set<ParentNode | LinkableParentNode>]> = new Map()) {
-        for(const {element: child} of node.children) {
-            if("linked" in child.node) {
-                if(map.has(child.node.id.id)) {
-                    map.get(child.node.id.id)![1].add(node)
+    /**
+     * Crawls the Node graph and maps all linkable nodes with info about number of parents and how far out in the graph they are
+     * @param root Root Node of the Document
+     * @returns map of all linkable nodes with number of parents and when it was last explored
+     */
+    private static nodeCrawler(root: ParentNode | LinkableParentNode) {
+        const queue: (ParentNode | LinkableParentNode | Node)[] = [root]
+        const map: Map<ParentNode | LinkableParentNode, [parents: number, lastExplored: number]> = new Map()
+        let i = 0
+        while(queue.length) {
+            const node = queue.shift()!
+            if("linked" in node) {
+                if(map.has(node)) {
+                    const nodeInfo = map.get(node)!
+                    nodeInfo[0]++
+                    nodeInfo[1] = i
                 } else {
-                    map.set(child.node.id.id, [child.node, new Set([node])])
+                    map.set(node, [1, i])
                 }
             }
-            if("children" in child.node) {
-                Document.nodeCrawler(child.node, map)
+            if("children" in node) {
+                for(const child of node.children) {
+                    queue.push(child.node)
+                }
             }
+            i++
         }
         return map
     }

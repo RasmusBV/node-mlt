@@ -8,7 +8,7 @@ export class Producer {
         this.node = new LinkableParentNode("producer", children, timestamp)
     }
     pushProperty(name: string, value: string | number) {
-        this.node.children.push({element: new Property(name, value)})
+        this.node.addChild(new Property(name, value))
         return this
     }
 }

@@ -1,12 +1,11 @@
-import { Producer } from "../external";
-import { resolve, join } from 'path'
+import { Producer } from "../../external";
+import { getId } from "./helper";
 
-const testcard = resolve(join(__dirname, "Test_card.png"))
-const simpleProducer = new Producer("pixbuf", {resource: testcard})
+const simpleProducer = new Producer("pixbuf", {resource: "test"})
 const simpleXMLResult = [
-    `<producer id="${simpleProducer.node.id.id}">`,
+    `<producer id="${getId(simpleProducer)}">`,
     [
-        `<property name="resource">${testcard}</property>`,
+        `<property name="resource">${"test"}</property>`,
         '<property name="mlt_service">pixbuf</property>'
     ],
     '</producer>'
@@ -16,11 +15,11 @@ test('Simple Producer', () => {
 })
 
 
-const imageProducer = Producer.Image(testcard)
+const imageProducer = Producer.Image("test")
 const imageXMLResult = [
-    `<producer id="${imageProducer.node.id.id}">`,
+    `<producer id="${getId(imageProducer)}">`,
     [
-        `<property name="resource">${testcard}</property>`,
+        `<property name="resource">${"test"}</property>`,
         '<property name="mlt_service">pixbuf</property>'
     ],
     '</producer>'
@@ -30,12 +29,12 @@ test('Image Producer', () => {
     expect(imageProducer.node.getXML({})).toEqual(imageXMLResult)
 })
 
-const propertyProducer = Producer.Image(testcard)
+const propertyProducer = Producer.Image("test")
 propertyProducer.pushProperty("test", 1)
 const propertyXMLResult = [
-    `<producer id="${propertyProducer.node.id.id}">`,
+    `<producer id="${getId(propertyProducer)}">`,
     [
-        `<property name="resource">${testcard}</property>`,
+        `<property name="resource">${"test"}</property>`,
         '<property name="mlt_service">pixbuf</property>',
         '<property name="test">1</property>'
     ],
@@ -45,7 +44,7 @@ test('Producer addProperty', () => {
     expect(propertyProducer.node.getXML({})).toEqual(propertyXMLResult)
 })
 
-const ProducerLinkXMLResult = [ `<test  producer="${propertyProducer.node.id.id}"/>` ]
-test('Producer Linking', () => {
+const ProducerLinkXMLResult = [ `<test  producer="${getId(propertyProducer)}"/>` ]
+test('Producers Should Link', () => {
     expect(propertyProducer.node.getXML({}, "test")).toEqual(ProducerLinkXMLResult)
 })
