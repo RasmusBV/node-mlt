@@ -2,6 +2,8 @@ import { Producer, Playlist, Filter, Document, Consumer } from "../../external";
 import { join } from 'path'
 import { DocumentTester } from "../helper";
 
+const documentTester = new DocumentTester()
+
 const producer1 = Producer.Image("test")
 producer1.node.id = "producer_1"
 
@@ -30,6 +32,10 @@ const profile = {
 test("Document Ordering Test", async () => {
     const document = new Document({profile, filters, root, consumer})
     const resultPath = join(__dirname, "document.result.mlt")
-    const [testFile, resultFile] = await DocumentTester.compareDocument(document, resultPath)
+    const [testFile, resultFile] = await documentTester.compareDocument(document, resultPath)
     expect(testFile).toEqual(resultFile)
+})
+
+afterAll(() => {
+    return documentTester.cleanDocuments()
 })

@@ -2,7 +2,7 @@ import { LinkableParentNode, Node, Timestamp, Property } from "../nodes"
 
 export class Producer {
     node: LinkableParentNode
-    constructor(mlt_service: Producer.Services, properties: Record<string, string | number>, timestamp?: Timestamp) {
+    constructor(mlt_service: Producer.Services, properties: Record<string, string | number> = {}, timestamp?: Timestamp) {
         const children = Node.mapPropertiesToNodes(properties)
         children.push({element: new Property("mlt_service", mlt_service)})
         this.node = new LinkableParentNode("producer", children, timestamp)

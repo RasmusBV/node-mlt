@@ -1,6 +1,9 @@
 import { Node, XMLString, ParentNode, LinkableParentNode } from './nodes'
-
 import { Producer, Filter, Consumer, Tractor, Playlist } from './external'
+import { createWriteStream } from 'fs'
+import { mkdtemp, rm } from 'fs/promises'
+import { join } from 'path'
+import { tmpdir } from 'os'
 
 export type Producers = Producer | Playlist | Tractor
 
@@ -27,15 +30,19 @@ export class Document {
     }
     addProfile(profile: Record<string, string | number>) {
         this.profile = profile
+        return this
     }
     addConsumer(consumer: Consumer) {
         this.consumer = consumer
+        return this
     }
     addFilter(filter: Filter) {
         this.filters.push(filter)
+        return this
     }
     addRoot(root: Producers) {
         this.root = root
+        return this
     }
     generateXML() {
         const document: XMLString = ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>']
@@ -54,6 +61,11 @@ export class Document {
                 }
             }
             document.push(this.root.node.getXML())
+
+            //Unlink all nodes for future document creation
+            for(const [child] of linkableElements) {
+                child.linked = false
+            }
         }
         for(const filter of this.filters) {
             document.push(filter.node.getXML())
@@ -80,7 +92,7 @@ export class Document {
      */
     private static nodeCrawler(root: ParentNode | LinkableParentNode) {
         const queue: (ParentNode | LinkableParentNode)[] = [root]
-        const map: Map<ParentNode | LinkableParentNode, [parents: number, lastExplored: number]> = new Map()
+        const map: Map<LinkableParentNode, [parents: number, lastExplored: number]> = new Map()
         let i = 0
         while(queue.length) {
             const node = queue.shift()!
@@ -102,5 +114,39 @@ export class Document {
             i++
         }
         return map
+    }
+    async saveAsXMLDocument(): Promise<{path: string, remove: () => Promise<void>}>
+    async saveAsXMLDocument(path: string): Promise<{path: string}>
+    async saveAsXMLDocument(path?: string) {
+        //Create writeStream to specified path or temp file
+        let returnVariable: {path: string, remove?: () => Promise<void>} = {path: ""}
+        
+        if(path) {
+            returnVariable.path = path
+        } else {
+            const tmp = await mkdtemp(join(tmpdir(), "melt-"))
+            returnVariable.path = join(tmp, "temp.mlt")
+            returnVariable.remove = () => rm(tmp, {recursive: true})
+        }
+        const stream = createWriteStream(returnVariable.path, {flags: "a"})
+        
+        //Write to stream
+        const xml = XMLIndenter(this.generateXML())
+        return new Promise((resolve: (value: {path: string, remove?: () => Promise<void>}) => void, reject) => {
+            stream.on("ready", () => {
+                let value = xml.next()
+                while(!value.done) {
+                    const line = value.value
+                    stream.write(line)
+                    value = xml.next()
+                }
+                stream.write("", () => {
+                    stream.close(() => {
+                        resolve(returnVariable)
+                    })
+                })
+            })
+            stream.on("error", (e) => reject(e))
+        })
     }
 }

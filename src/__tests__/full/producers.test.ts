@@ -2,6 +2,8 @@ import { Producer, Playlist, Tractor, Filter, Transition, Document } from "../..
 import { join } from 'path'
 import { DocumentTester } from "../helper";
 
+const documentTester = new DocumentTester()
+
 const producer1 = Producer.Image("test")
 producer1.node.id = "producer_1"
 
@@ -69,6 +71,11 @@ tractor3.multitrack.node.id = "multitrack_3"
 test("All Producers Linking Test", async () => {
     const document = new Document({root: tractor3})
     const resultPath = join(__dirname, "producers.result.mlt")
-    const [testFile, resultFile] = await DocumentTester.compareDocument(document, resultPath)
+    const [testFile, resultFile] = await documentTester.compareDocument(document, resultPath)
     expect(testFile).toEqual(resultFile)
+})
+
+
+afterAll(() => {
+    return documentTester.cleanDocuments()
 })

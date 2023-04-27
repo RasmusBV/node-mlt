@@ -1,6 +1,5 @@
 import { LinkableParentNode, ParentNode, XMLString } from "../nodes";
 import MLT from '../index'
-import { createXMLDocument } from "../mlt"
 import { readFile } from "fs/promises";
 
 export function getId(element: {node: LinkableParentNode | ParentNode}) {
@@ -26,19 +25,19 @@ export namespace SimpleElements {
 }
 
 export class DocumentTester {
-    private static documentPaths: (() => Promise<void>)[] = []
-    static async generateDocument(document: MLT.Document) {
-        const {path, remove} = await createXMLDocument(document)
+    private documentPaths: (() => Promise<void>)[] = []
+    async generateDocument(document: MLT.Document) {
+        const {path, remove} = await document.saveAsXMLDocument()
         this.documentPaths.push(remove)
         return path
     }
-    static async compareDocument(document: MLT.Document, resultPath: string) {
+    async compareDocument(document: MLT.Document, resultPath: string) {
         const testPath = await this.generateDocument(document)
         const testFile = await readFile(testPath, {encoding: "utf-8"})
         const resultFile = await readFile(resultPath, {encoding: "utf-8"})
         return [testFile, resultFile] as [string, string]
     }
-    static async cleanDocuments() {
+    async cleanDocuments() {
         while(this.documentPaths.length) {
             const remove = this.documentPaths.shift()!
             remove()
