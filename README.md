@@ -5,7 +5,7 @@ A Package for generating and executing XML Documents for the [MLT Multimedia Fra
 ## **Document Creation**
 ### Creating a Playlist consisting of 2 Producers
 ```TypeScript
-import { MLT } from 'mlt'
+import { MLT } from 'node-mlt'
 
 // Creating 2 producers
 const firstProducer = new MLT.Producer("color", {resource: "orange"})
