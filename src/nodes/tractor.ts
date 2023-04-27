@@ -21,18 +21,31 @@ export type LinkedFilter = {filter: Filter, track: Producers, timestamp?: Timest
 export type LinkedTransition = {transition: Transition, a_track: Producers, b_track: Producers, timestamp?: Timestamp}
 
 export class Tractor {
-    private multitrack: Multitrack
+    multitrack: Multitrack
     node: LinkableParentNode
-    constructor(tracks: Tractor.Track[], filters: LinkedFilter[]=[], transitions: LinkedTransition[]=[], timestamp?: Timestamp) {
+    constructor(tracks: Tractor.Track[])
+    constructor(tracks: Tractor.Track[], filters: (LinkedFilter[] | LinkedTransition[]))
+    constructor(tracks: Tractor.Track[], filters: LinkedFilter[], transitions: LinkedTransition[], timestamp?: Timestamp)
+    constructor(tracks: Tractor.Track[], filters?: (LinkedFilter[] | LinkedTransition[]), transitions?: LinkedTransition[], timestamp?: Timestamp) {
         this.multitrack = new Multitrack(tracks)
         this.node = new LinkableParentNode("tractor", [{element: this.multitrack}], timestamp)
-        for(let i = 0; i < filters.length; i++) {
-            const {filter, track, timestamp = {}} = filters[i]
-            this.addFilter(filter, track, timestamp)
+        if(filters) {
+            for(let i = 0; i < filters.length; i++) {
+                if("filter" in filters[i]) {
+                    const {filter, track, timestamp = {}} = filters[i] as LinkedFilter
+                    this.addFilter(filter, track, timestamp)
+                } else {
+                    const {transition, a_track, b_track, timestamp = {}} = filters[i] as LinkedTransition
+                    this.addTransition(transition, a_track, b_track, timestamp) 
+                }
+                
+            }
         }
-        for(let i = 0; i < transitions.length; i++) {
-            const {transition, a_track, b_track, timestamp = {}} = transitions[i]
-            this.addTransition(transition, a_track, b_track, timestamp)
+        if(transitions) {
+            for(let i = 0; i < transitions.length; i++) {
+                const {transition, a_track, b_track, timestamp = {}} = transitions[i]
+                this.addTransition(transition, a_track, b_track, timestamp)
+            }
         }
     }
     addTrack(producer: Producers, timestamp: Timestamp = {}) {

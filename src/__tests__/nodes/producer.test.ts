@@ -1,5 +1,5 @@
 import { Producer } from "../../external";
-import { getId } from "./helper";
+import { getId } from "../helper";
 
 const simpleProducer = new Producer("pixbuf", {resource: "test"})
 const simpleXMLResult = [

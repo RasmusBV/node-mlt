@@ -1,4 +1,4 @@
-import { Timestamp, Node, XMLString, ParentNode, LinkableParentNode } from './nodes'
+import { Node, XMLString, ParentNode, LinkableParentNode } from './nodes'
 
 import { Producer, Filter, Consumer, Tractor, Playlist } from './external'
 
@@ -38,7 +38,7 @@ export class Document {
         this.root = root
     }
     generateXML() {
-        const document: XMLString = []
+        const document: XMLString = ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>']
         if(Object.entries(this.profile).length !== 0) {
             const profile = new Node("profile", this.profile)
             document.push(profile.getXML())
@@ -50,7 +50,6 @@ export class Document {
             //Generates XML for that node at the top of the document for linking
             for(const [child, [parents]] of linkableElements) {
                 if(parents > 1) {
-                    console.log([child, parents])
                     document.push(child.getXML())
                 }
             }
@@ -62,7 +61,8 @@ export class Document {
         if(this.consumer) {
             document.push(this.consumer.node.getXML())
         }
-        return ['<?xml version="1.0" encoding="utf-8"?>', '<mlt>', document, '</mlt>']
+        document.push('</mlt>')
+        return document
     }
     generateDocumentString(indent = 4) {
         const xml = this.generateXML()
@@ -79,7 +79,7 @@ export class Document {
      * @returns map of all linkable nodes with number of parents and when it was last explored
      */
     private static nodeCrawler(root: ParentNode | LinkableParentNode) {
-        const queue: (ParentNode | LinkableParentNode | Node)[] = [root]
+        const queue: (ParentNode | LinkableParentNode)[] = [root]
         const map: Map<ParentNode | LinkableParentNode, [parents: number, lastExplored: number]> = new Map()
         let i = 0
         while(queue.length) {
@@ -95,6 +95,7 @@ export class Document {
             }
             if("children" in node) {
                 for(const child of node.children) {
+                    if(!("id" in child.node)) {continue}
                     queue.push(child.node)
                 }
             }

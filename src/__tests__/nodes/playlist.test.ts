@@ -1,5 +1,5 @@
 import { Playlist } from "../../external";
-import { getId, SimpleElements } from "./helper";
+import { getId, SimpleElements } from "../helper";
 
 const simplePlaylist = new Playlist([])
 const simpleXMLResult = [ `<playlist id="${getId(simplePlaylist)}">`, [], '</playlist>' ]

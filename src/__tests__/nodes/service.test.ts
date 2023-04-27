@@ -1,6 +1,6 @@
 import { Service } from "../../nodes";
 import { Filter, Transition, Consumer } from "../../external";
-import { getId } from "./helper";
+import { getId } from "../helper";
 
 const simpleService = new Service("service", "test", {})
 
