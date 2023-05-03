@@ -33,7 +33,7 @@
     "@types/node": "^18.15.11"
   },
   "files": [
-    "./lib/**/*"
+    "/lib"
   ],
   "exports": {
     ".": {
