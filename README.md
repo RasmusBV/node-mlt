@@ -41,7 +41,7 @@ tractor.addFilter(greyscaleFilter, playlist)
 // Creating a Consumer
 const consumer = MLT.Consumer.Video("path/to/save/video")
 
-// Generating a Document and saving it to an XML file
+// Generating a Document with the Tractor as the root
 const document = new MLT.Document()
     .addRoot(tractor)
     .addConsumer(consumer)
@@ -51,7 +51,7 @@ const document = new MLT.Document()
 ```TypeScript
 MLT.melt(document)
 ```
-*This is only possible if MLT is installed*
+*This is only possible if the melt CLI is installed*
 ### **Saving a document in an XML file**
 ```TypeScript
 document.saveAsXMLDocument("path/to/save/document.xml")

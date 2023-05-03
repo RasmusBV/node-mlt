@@ -2,7 +2,7 @@
   "name": "node-mlt",
   "version": "0.0.3",
   "description": "",
-  "types": "./lib/cjs/types/index.d.ts",
+  "types": "./lib/types/index.d.ts",
   "main": "./lib/cjs/index.js",
   "repository": {
     "type": "git",
@@ -10,9 +10,10 @@
   },
   "scripts": {
     "clean": "rm -rf ./lib",
-    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs&&npm run build:types",
     "build:esm": "rollup --config ./configs/rollup.config.mjs",
     "build:cjs": "tsc -p ./configs/tsconfig.cjs.json",
+    "build:types": "tsc -p ./configs/tsconfig.types.json",
     "prepack": "npm run build",
     "test": "jest --config ./configs/jestconfig.json"
   },
@@ -36,14 +37,9 @@
   ],
   "exports": {
     ".": {
-      "import": {
-        "types": "./lib/esm/types/index.d.ts",
-        "default": "./lib/esm/index.mjs"
-      },
-      "require": {
-        "types": "./lib/cjs/types/index.d.ts",
-        "default": "./lib/cjs/index.js"
-      }
+      "import": "./lib/esm/index.mjs",
+      "require": "./lib/cjs/index.js",
+      "types": "./lib/types/index.d.ts"
     }
   }
 }
