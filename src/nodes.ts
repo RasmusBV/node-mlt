@@ -30,7 +30,7 @@ export class Node {
         }
     }
     static mapPropertiesToNodes(properties: Record<string, string | number>) {
-        const nodes: ChildElement[] = Array(Object.entries(properties).length).fill(null)
+        const nodes: ChildElement[] = Array(Object.entries(properties).length)
         let i = 0
         for(const property in properties) {
             nodes[i] = {element: new Property(property, properties[property])}

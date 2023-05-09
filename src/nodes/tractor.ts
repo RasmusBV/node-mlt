@@ -1,4 +1,4 @@
-import { LinkableParentNode, ParentNode, ChildElement, Node, Timestamp, Property } from "../nodes"
+import { LinkableParentNode, ParentNode, Timestamp, Property } from "../nodes"
 import { Producers } from "../document"
 import { Transition } from "./transition"
 import { Filter } from "./filter"
@@ -17,25 +17,22 @@ class Multitrack {
     }
 }
 
-export type LinkedFilter = {filter: Filter, track: Producers, timestamp?: Timestamp}
-export type LinkedTransition = {transition: Transition, a_track: Producers, b_track: Producers, timestamp?: Timestamp}
-
 export class Tractor {
     multitrack: Multitrack
     node: LinkableParentNode
     constructor(tracks: Tractor.Track[])
-    constructor(tracks: Tractor.Track[], filters: (LinkedFilter[] | LinkedTransition[]))
-    constructor(tracks: Tractor.Track[], filters: LinkedFilter[], transitions: LinkedTransition[], timestamp?: Timestamp)
-    constructor(tracks: Tractor.Track[], filters?: (LinkedFilter[] | LinkedTransition[]), transitions?: LinkedTransition[], timestamp?: Timestamp) {
+    constructor(tracks: Tractor.Track[], filters: (Tractor.LinkedFilter[] | Tractor.LinkedTransition[]))
+    constructor(tracks: Tractor.Track[], filters: Tractor.LinkedFilter[], transitions: Tractor.LinkedTransition[], timestamp?: Timestamp)
+    constructor(tracks: Tractor.Track[], filters?: (Tractor.LinkedFilter[] | Tractor.LinkedTransition[]), transitions?: Tractor.LinkedTransition[], timestamp?: Timestamp) {
         this.multitrack = new Multitrack(tracks)
         this.node = new LinkableParentNode("tractor", [{element: this.multitrack}], timestamp)
         if(filters) {
             for(let i = 0; i < filters.length; i++) {
                 if("filter" in filters[i]) {
-                    const {filter, track, timestamp = {}} = filters[i] as LinkedFilter
+                    const {filter, track, timestamp = {}} = filters[i] as Tractor.LinkedFilter
                     this.addFilter(filter, track, timestamp)
                 } else {
-                    const {transition, a_track, b_track, timestamp = {}} = filters[i] as LinkedTransition
+                    const {transition, a_track, b_track, timestamp = {}} = filters[i] as Tractor.LinkedTransition
                     this.addTransition(transition, a_track, b_track, timestamp) 
                 }
                 
@@ -69,4 +66,6 @@ export class Tractor {
 
 export namespace Tractor {
     export type Track = {element: Producers, timestamp?: Timestamp}
+    export type LinkedFilter = {filter: Filter, track: Producers, timestamp?: Timestamp}
+    export type LinkedTransition = {transition: Transition, a_track: Producers, b_track: Producers, timestamp?: Timestamp}
 }
