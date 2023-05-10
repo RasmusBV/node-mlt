@@ -2,6 +2,7 @@ import * as sax from 'sax'
 import { EventEmitter } from 'events'
 
 const LeafElements = [
+    "profile",
     "property",
     "entry",
     "track",
@@ -25,7 +26,6 @@ const BlockElements = [
 ] as const
 export type BlockElement = typeof BlockElements[number]
 
-
 type ValidElement = BlockElement | ServiceElement | LeafElement
 
 
@@ -39,7 +39,7 @@ const ValidChildren = {
     playlist:   ["entry", "blank", "producer", "playlist", "tractor"],
     multitrack: ["track", "producer", "playlist", "tractor"],
     tractor:    ["multitrack", "filter", "transition"],
-    mlt:        ["producer", "playlist", "tractor", "consumer", "filter"]
+    mlt:        ["producer", "playlist", "tractor", "consumer", "filter", "profile"]
 } as const
 
 type ValidChildren<T extends ServiceElement | BlockElement> = typeof ValidChildren[T][number]
@@ -104,7 +104,8 @@ const ValidAttributes = {
         in:             {int: true,  opt: true }, 
         out:            {int: true,  opt: true }
     },
-    mlt:        {}
+    mlt:        {},
+    profile:    {} as Record<string, string>
 } as const
 
 type ValidAttributes<T extends ValidElement> = typeof ValidAttributes[T]
@@ -257,7 +258,7 @@ export class DOMBuilder extends EventEmitter {
         this.foundRoot = true
         
         //This is to make the stack and DOM refer to the same object for mutating them both
-        const root:FinishedElement<"mlt"> = {name: "mlt", children: [], attributes: {}}
+        const root: FinishedElement<"mlt"> = {name: "mlt", children: [], attributes: {}}
         this.stack.push(root)
         this.DOM = root
         return
@@ -283,6 +284,8 @@ export class DOMBuilder extends EventEmitter {
         let node: FinishedElement
         if(this.parser.isBlockElementname(tagName)) {
             node = {name: tagName, attributes: this.constructAttributes(tagName, tag.attributes), children: []} as FinishedElement<"playlist" | "tractor" | "multitrack">
+        } else if(tagName === "profile") {
+            node = {name: tagName, attributes: tag.attributes} as FinishedElement<"profile">
         } else {
             node = {name: tagName, attributes: this.constructAttributes(tagName, tag.attributes)} as FinishedElement<"blank" | "entry" | "track">
         }

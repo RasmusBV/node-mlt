@@ -1,5 +1,12 @@
 # **Node-MLT**
-A Package for generating and executing XML Documents for the [MLT Multimedia Framework](https://www.mltframework.org/, "MLT Multimedia Framework").
+A Package for generating and executing XML Documents for the [MLT Multimedia Framework](https://www.mltframework.org/ "MLT Multimedia Framework").
+
+# **Disclaimer**
+I am **not** an expert on the MLT Framework, far from. I have had a hard time finding up-to-date documentation for the MLT Framework as a whole, so this is my best attempt at creating a package for generating valid XML Documents. 
+
+This package is still in early development, and this is my first npm package so expect more features, improvements and documentation in the future.
+
+Finally, feel free to leave leave a message [here](https://github.com/RasmusBV/node-mlt/issues "RasmusBV/node-mlt/issues") if you have any suggestions or bug reports.
 
 # **Basic Usage**
 ## **Document Creation**

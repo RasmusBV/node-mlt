@@ -1,6 +1,7 @@
 import { LinkableParentNode, ParentNode, XMLString } from "../nodes";
 import MLT from '../index'
 import { readFile } from "fs/promises";
+import { join } from "path";
 
 export function getId(element: {node: LinkableParentNode | ParentNode}) {
     return element.node.id
@@ -42,5 +43,9 @@ export class DocumentTester {
             const remove = this.documentPaths.shift()!
             remove()
         }
+    }
+    async runXMLGenerationTest(document: MLT.Document, dirname: string, index?: number) {
+        const resultPath = index ? join(dirname, `result${index}.xml`) : join(dirname, "result.xml")
+        return await this.compareDocument(document, resultPath)
     }
 }

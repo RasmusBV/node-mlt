@@ -17,6 +17,8 @@ export function* XMLIndenter(xmlString: XMLString, indent = 4,i = 0): Generator<
     }
 }
 
+type ParentLink = {node: LinkableParentNode | ParentNode, parent: ParentLink | undefined}
+
 export class Document {
     private profile: Record<string, string | number>
     private consumer: Consumer | undefined
@@ -91,29 +93,46 @@ export class Document {
      * @returns map of all linkable nodes with number of parents and when it was last explored
      */
     private static nodeCrawler(root: ParentNode | LinkableParentNode) {
-        const queue: (ParentNode | LinkableParentNode)[] = [root]
+        const queue: ParentLink[] = [{node: root, parent: undefined}]
         const map: Map<LinkableParentNode, [parents: number, lastExplored: number]> = new Map()
+
         let i = 0
         while(queue.length) {
-            const node = queue.shift()!
-            if("linked" in node) {
-                if(map.has(node)) {
-                    const nodeInfo = map.get(node)!
-                    nodeInfo[0]++
-                    nodeInfo[1] = i
-                } else {
-                    map.set(node, [1, i])
-                }
-            }
-            if("children" in node) {
-                for(const child of node.children) {
-                    if(!("id" in child.node)) {continue}
-                    queue.push(child.node)
-                }
-            }
+            const parentLink = queue.shift()!
+            const children = this.handleNode(parentLink, map, i)
+            queue.push(...children)
             i++
         }
         return map
+    }
+    private static handleNode(parentLink: ParentLink, map: Map<LinkableParentNode, [parents: number, lastExplored: number]>, i: number) {
+        const {node, parent} = parentLink
+
+        //Add or update counters for this node
+        if("linked" in node) {
+            if(map.has(node)) {
+                const nodeInfo = map.get(node)!
+                nodeInfo[0]++
+                nodeInfo[1] = i
+            } else {
+                map.set(node, [1, i])
+            }
+        }
+        const children: ParentLink[] = []
+        //Add all children to queue
+        if("children" in node) {
+            for(const child of node.children) {
+                if(!("id" in child.node)) {continue}
+                let nextParent = parent
+                //Check for circular references
+                while(nextParent) {
+                    if(nextParent.node === child.node) {throw new Error("Circular Reference")}
+                    nextParent = nextParent.parent
+                }
+                children.push({node: child.node, parent: parentLink})
+            }
+        }
+        return children
     }
     async saveAsXMLDocument(): Promise<{path: string, remove: () => Promise<void>}>
     async saveAsXMLDocument(path: string): Promise<{path: string}>

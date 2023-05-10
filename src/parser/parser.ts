@@ -10,7 +10,7 @@ async function parse(string: string) {
         }).on("error", (e) => reject(e))
         builder.parse(string)
     })
-    return crawler.crawl(dom)
+    return crawler.DocumentBuilder(dom)
 }
 
 const document = `

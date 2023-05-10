@@ -30,11 +30,13 @@ export class DOMCrawler {
         }
         throw new Error("Entry or Track references unknown id")
     }
-    crawl(node: FinishedElement<"mlt">) {
+    DocumentBuilder(node: FinishedElement<"mlt">) {
         let filters: MLT.Filter[] = []
         let consumer: MLT.Consumer | undefined
         let root: Producers | undefined
-        node.children.forEach((child) => {
+        let profile: Record<string, string> | undefined
+        for(let i = 0; i < node.children.length; i++) {
+            const child = node.children[i]
             switch (child.name) {
                 case "filter": {
                     filters.push(this.constructFilter(child).filter)
@@ -54,9 +56,14 @@ export class DOMCrawler {
                 } case "tractor": {
                     root = this.constructTractor(child).tractor
                     break;
+                } case "profile": {
+                    if(i !== 0) {
+                        throw new Error("profile tag must be the first child of the mlt tag")
+                    }
+                    profile = child.attributes
                 }
             }
-        })
+        }
         return {root, filters, consumer}
     }
     constructTractor(node: FinishedElement<"tractor">) {
@@ -96,6 +103,9 @@ export class DOMCrawler {
         }
         const tractor = new MLT.Tractor(entries, filters, transitions, timestamp)
         if(id) {
+            if(id in this.idTable.tractors) {
+                throw new Error("Duplicate id's")
+            }
             tractor.node.id = id
             this.idTable.tractors[id]= tractor
         }
@@ -155,6 +165,9 @@ export class DOMCrawler {
         }
         const playlist = new Playlist(entries)
         if(id) {
+            if(id in this.idTable.playlist) {
+                throw new Error("Duplicate id's")
+            }
             playlist.node.id = id
             this.idTable.playlist[id] = playlist
         }
@@ -165,6 +178,9 @@ export class DOMCrawler {
         const {id = undefined, mlt_service, ...timestamp} = node.attributes
         const producer =  new MLT.Producer(mlt_service as MLT.Producer.Services, properties, timestamp)
         if(id) {
+            if(id in this.idTable.producer) {
+                throw new Error("Duplicate id's")
+            }
             producer.node.id = id
             this.idTable.producer[id] = producer
         }
@@ -175,6 +191,9 @@ export class DOMCrawler {
         const {id = undefined, mlt_service, ...timestamp} = node.attributes
         const consumer = new MLT.Consumer(mlt_service as MLT.Consumer.Services, properties, timestamp)
         if(id) {
+            if(id in this.idTable.consumer) {
+                throw new Error("Duplicate id's")
+            }
             consumer.node.id = id
             this.idTable.consumer[id] = consumer
         }
@@ -188,6 +207,9 @@ export class DOMCrawler {
         }
         const transition = new MLT.Transition(mlt_service as MLT.Transition.Services, properties, timestamp)
         if(id) {
+            if(id in this.idTable.transition) {
+                throw new Error("Duplicate id's")
+            }
             transition.node.id = id
             this.idTable.transition[id] = transition
         }
@@ -196,11 +218,11 @@ export class DOMCrawler {
     constructFilter(node: FinishedElement<"filter">) {
         const properties = Object.fromEntries(node.children.map(({attributes: {name, value}}) => [name, value]))
         const {id = undefined, mlt_service, track, ...timestamp} = node.attributes
-        if(id && id in this.idTable.filter) {
-            return {filter: this.idTable.filter[id], track, timestamp: timestamp}
-        }
         const filter = new MLT.Filter(mlt_service as MLT.Filter.Services, properties, timestamp)
         if(id) {
+            if(id in this.idTable.filter) {
+                throw new Error("Duplicate id's")
+            }
             filter.node.id = id
             this.idTable.filter[id] = filter
         }
