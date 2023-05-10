@@ -1,6 +1,6 @@
-import { Producer, Playlist, Tractor, Filter, Transition, Document } from "../../external";
+import { Producer, Playlist, Tractor, Filter, Transition, Document } from "../../../external";
 import { join } from 'path'
-import { DocumentTester } from "../helper";
+import { DocumentTester } from "../../helper";
 
 const documentTester = new DocumentTester()
 
@@ -70,11 +70,9 @@ tractor3.multitrack.node.id = "multitrack_3"
 
 test("All Producers Linking Test", async () => {
     const document = new Document({root: tractor3})
-    const resultPath = join(__dirname, "producers.result.mlt")
-    const [testFile, resultFile] = await documentTester.compareDocument(document, resultPath)
+    const [testFile, resultFile] = await documentTester.runXMLGenerationTest(document, __dirname)
     expect(testFile).toEqual(resultFile)
 })
-
 
 afterAll(() => {
     return documentTester.cleanDocuments()

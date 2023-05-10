@@ -1,6 +1,6 @@
-import { Producer, Playlist, Filter, Document, Consumer } from "../../external";
+import { Producer, Playlist, Filter, Document, Consumer } from "../../../external";
 import { join } from 'path'
-import { DocumentTester } from "../helper";
+import { DocumentTester } from "../../helper";
 
 const documentTester = new DocumentTester()
 
@@ -31,8 +31,7 @@ const profile = {
 
 test("Document Ordering Test", async () => {
     const document = new Document({profile, filters, root, consumer})
-    const resultPath = join(__dirname, "document.result.mlt")
-    const [testFile, resultFile] = await documentTester.compareDocument(document, resultPath)
+    const [testFile, resultFile] = await documentTester.runXMLGenerationTest(document, __dirname)
     expect(testFile).toEqual(resultFile)
 })
 

@@ -4,7 +4,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noErrorTruncation": true
   },
   "include": ["../src"],
   "exclude": ["../src/__tests__/", "../src/playground.ts"]

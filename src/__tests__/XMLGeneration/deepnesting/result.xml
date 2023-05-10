@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mlt>
+    <tractor id="root">
+        <multitrack id="root">
+            <playlist id="playlist_0">
+                <tractor in="0" out="20" id="tractor_0">
+                    <multitrack id="multitrack_0">
+                        <playlist id="playlist_1">
+                            <tractor in="20" out="40" id="tractor_1">
+                                <multitrack id="multitrack_1">
+                                    <playlist id="playlist_2">
+                                        <tractor in="40" out="60" id="tractor_2">
+                                            <multitrack id="multitrack_2">
+                                                <playlist id="playlist_3">
+                                                    <tractor in="60" out="80" id="tractor_3">
+                                                        <multitrack id="multitrack_3">
+                                                            <playlist id="playlist_4">
+                                                                <tractor in="80" out="100" id="tractor_4">
+                                                                    <multitrack id="multitrack_4">
+                                                                        <playlist id="playlist_5">
+                                                                            <tractor in="100" out="120" id="tractor_5">
+                                                                                <multitrack id="multitrack_5">
+                                                                                    <playlist id="playlist_6">
+                                                                                        <tractor in="120" out="140" id="tractor_6">
+                                                                                            <multitrack id="multitrack_6">
+                                                                                                <playlist id="playlist_7">
+                                                                                                    <tractor in="140" out="160" id="tractor_7">
+                                                                                                        <multitrack id="multitrack_7">
+                                                                                                            <playlist id="playlist_8">
+                                                                                                                <tractor in="160" out="180" id="tractor_8">
+                                                                                                                    <multitrack id="multitrack_8">
+                                                                                                                        <playlist id="playlist_9">
+                                                                                                                            <tractor in="180" out="200" id="tractor_9">
+                                                                                                                                <multitrack id="multitrack_9">
+                                                                                                                                    <playlist id="playlist_10">
+                                                                                                                                        <tractor in="200" out="220" id="tractor_10">
+                                                                                                                                            <multitrack id="multitrack_10">
+                                                                                                                                                <playlist id="playlist_11">
+                                                                                                                                                    <tractor in="220" out="240" id="tractor_11">
+                                                                                                                                                        <multitrack id="multitrack_11">
+                                                                                                                                                            <playlist id="playlist_12">
+                                                                                                                                                                <tractor in="240" out="260" id="tractor_12">
+                                                                                                                                                                    <multitrack id="multitrack_12">
+                                                                                                                                                                        <playlist id="playlist_13">
+                                                                                                                                                                            <tractor in="260" out="280" id="tractor_13">
+                                                                                                                                                                                <multitrack id="multitrack_13">
+                                                                                                                                                                                    <playlist id="playlist_14">
+                                                                                                                                                                                        <tractor in="280" out="300" id="tractor_14">
+                                                                                                                                                                                            <multitrack id="multitrack_14">
+                                                                                                                                                                                                <playlist id="playlist_15">
+                                                                                                                                                                                                    <tractor in="300" out="320" id="tractor_15">
+                                                                                                                                                                                                        <multitrack id="multitrack_15">
+                                                                                                                                                                                                            <playlist id="playlist_16">
+                                                                                                                                                                                                                <tractor in="320" out="340" id="tractor_16">
+                                                                                                                                                                                                                    <multitrack id="multitrack_16">
+                                                                                                                                                                                                                        <playlist id="playlist_17">
+                                                                                                                                                                                                                            <tractor in="340" out="360" id="tractor_17">
+                                                                                                                                                                                                                                <multitrack id="multitrack_17">
+                                                                                                                                                                                                                                    <playlist id="playlist_18">
+                                                                                                                                                                                                                                        <tractor in="360" out="380" id="tractor_18">
+                                                                                                                                                                                                                                            <multitrack id="multitrack_18">
+                                                                                                                                                                                                                                                <playlist id="playlist_19">
+                                                                                                                                                                                                                                                    <tractor in="380" out="400" id="tractor_19">
+                                                                                                                                                                                                                                                        <multitrack id="multitrack_19">
+                                                                                                                                                                                                                                                        </multitrack>
+                                                                                                                                                                                                                                                    </tractor>
+                                                                                                                                                                                                                                                </playlist>
+                                                                                                                                                                                                                                                <producer id="producer_19">
+                                                                                                                                                                                                                                                    <property name="mlt_service">avformat</property>
+                                                                                                                                                                                                                                                </producer>
+                                                                                                                                                                                                                                            </multitrack>
+                                                                                                                                                                                                                                        </tractor>
+                                                                                                                                                                                                                                    </playlist>
+                                                                                                                                                                                                                                    <producer id="producer_18">
+                                                                                                                                                                                                                                        <property name="mlt_service">avformat</property>
+                                                                                                                                                                                                                                    </producer>
+                                                                                                                                                                                                                                </multitrack>
+                                                                                                                                                                                                                            </tractor>
+                                                                                                                                                                                                                        </playlist>
+                                                                                                                                                                                                                        <producer id="producer_17">
+                                                                                                                                                                                                                            <property name="mlt_service">avformat</property>
+                                                                                                                                                                                                                        </producer>
+                                                                                                                                                                                                                    </multitrack>
+                                                                                                                                                                                                                </tractor>
+                                                                                                                                                                                                            </playlist>
+                                                                                                                                                                                                            <producer id="producer_16">
+                                                                                                                                                                                                                <property name="mlt_service">avformat</property>
+                                                                                                                                                                                                            </producer>
+                                                                                                                                                                                                        </multitrack>
+                                                                                                                                                                                                    </tractor>
+                                                                                                                                                                                                </playlist>
+                                                                                                                                                                                                <producer id="producer_15">
+                                                                                                                                                                                                    <property name="mlt_service">avformat</property>
+                                                                                                                                                                                                </producer>
+                                                                                                                                                                                            </multitrack>
+                                                                                                                                                                                        </tractor>
+                                                                                                                                                                                    </playlist>
+                                                                                                                                                                                    <producer id="producer_14">
+                                                                                                                                                                                        <property name="mlt_service">avformat</property>
+                                                                                                                                                                                    </producer>
+                                                                                                                                                                                </multitrack>
+                                                                                                                                                                            </tractor>
+                                                                                                                                                                        </playlist>
+                                                                                                                                                                        <producer id="producer_13">
+                                                                                                                                                                            <property name="mlt_service">avformat</property>
+                                                                                                                                                                        </producer>
+                                                                                                                                                                    </multitrack>
+                                                                                                                                                                </tractor>
+                                                                                                                                                            </playlist>
+                                                                                                                                                            <producer id="producer_12">
+                                                                                                                                                                <property name="mlt_service">avformat</property>
+                                                                                                                                                            </producer>
+                                                                                                                                                        </multitrack>
+                                                                                                                                                    </tractor>
+                                                                                                                                                </playlist>
+                                                                                                                                                <producer id="producer_11">
+                                                                                                                                                    <property name="mlt_service">avformat</property>
+                                                                                                                                                </producer>
+                                                                                                                                            </multitrack>
+                                                                                                                                        </tractor>
+                                                                                                                                    </playlist>
+                                                                                                                                    <producer id="producer_10">
+                                                                                                                                        <property name="mlt_service">avformat</property>
+                                                                                                                                    </producer>
+                                                                                                                                </multitrack>
+                                                                                                                            </tractor>
+                                                                                                                        </playlist>
+                                                                                                                        <producer id="producer_9">
+                                                                                                                            <property name="mlt_service">avformat</property>
+                                                                                                                        </producer>
+                                                                                                                    </multitrack>
+                                                                                                                </tractor>
+                                                                                                            </playlist>
+                                                                                                            <producer id="producer_8">
+                                                                                                                <property name="mlt_service">avformat</property>
+                                                                                                            </producer>
+                                                                                                        </multitrack>
+                                                                                                    </tractor>
+                                                                                                </playlist>
+                                                                                                <producer id="producer_7">
+                                                                                                    <property name="mlt_service">avformat</property>
+                                                                                                </producer>
+                                                                                            </multitrack>
+                                                                                        </tractor>
+                                                                                    </playlist>
+                                                                                    <producer id="producer_6">
+                                                                                        <property name="mlt_service">avformat</property>
+                                                                                    </producer>
+                                                                                </multitrack>
+                                                                            </tractor>
+                                                                        </playlist>
+                                                                        <producer id="producer_5">
+                                                                            <property name="mlt_service">avformat</property>
+                                                                        </producer>
+                                                                    </multitrack>
+                                                                </tractor>
+                                                            </playlist>
+                                                            <producer id="producer_4">
+                                                                <property name="mlt_service">avformat</property>
+                                                            </producer>
+                                                        </multitrack>
+                                                    </tractor>
+                                                </playlist>
+                                                <producer id="producer_3">
+                                                    <property name="mlt_service">avformat</property>
+                                                </producer>
+                                            </multitrack>
+                                        </tractor>
+                                    </playlist>
+                                    <producer id="producer_2">
+                                        <property name="mlt_service">avformat</property>
+                                    </producer>
+                                </multitrack>
+                            </tractor>
+                        </playlist>
+                        <producer id="producer_1">
+                            <property name="mlt_service">avformat</property>
+                        </producer>
+                    </multitrack>
+                </tractor>
+            </playlist>
+            <producer id="producer_0">
+                <property name="mlt_service">avformat</property>
+            </producer>
+        </multitrack>
+    </tractor>
+</mlt>
